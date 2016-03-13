@@ -1,2 +1,2 @@
 # MergesortWithThreads
-An ettempt to mergesort with Threads
+An attempt to mergesort with Threads
