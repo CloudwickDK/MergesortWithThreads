@@ -27,11 +27,11 @@ public class Mergesort<T extends Comparable> implements Runnable {
 			return;
 		}
 		int mid = Math.floorDiv(start + stop, 2);
-		//Thread mt = new Thread (new Mergesort<T>(arrayT, 0, arrayT.length-1));
-		//mt.start();
-		mergesort(arrayT, mid + 1, stop);
+		Thread mt = new Thread (new Mergesort<T>(arrayT, mid+1, stop));
+		mt.start();
+		//mergesort(arrayT, mid + 1, stop);
 		mergesort(arrayT, start, mid);
-		//mt.join();
+		mt.join();
 		merge(start, stop);
 	}
 
