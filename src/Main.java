@@ -11,5 +11,12 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		print(intarr);
+	}
+	public static void print(Integer[] intarr) {
+		for (int indexArray = 0; indexArray < intarr.length; indexArray++) {
+			System.out.printf("%s, ", intarr[indexArray].toString());
+		}
+		System.out.println("");
 	}
 }

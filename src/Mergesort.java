@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * This class implements concurrent Mergesort
  * 
@@ -16,31 +18,30 @@ public class Mergesort<T extends Comparable> implements Runnable {
 		this.stop = stop;
 	}
 
-	public void sort() {
-		this.arrayT = this.mergesort(this.arrayT, this.start, this.stop);
+	public void sort() throws InterruptedException {
+		this.mergesort(this.arrayT, this.start, this.stop);
 	}
 
-	private T[] mergesort(T[] arrayT, int start, int stop) {
-
+	private void mergesort(T[] arrayT, int start, int stop) throws InterruptedException {
 		if (start == stop) {
-			@SuppressWarnings("unchecked")
-			T[] value = (T[]) new Comparable[1];
-			value[0] = arrayT[start];
-			return value;
+			return;
 		}
-
 		int mid = Math.floorDiv(start + stop, 2);
-		//System.out.printf("S:%d, M:%d, S:%d\n", start, mid, stop);
-		T[] firstArrayT = mergesort(arrayT, start, mid);
-		
-		T[] secondArrayT = mergesort(arrayT, mid + 1, stop);
-		//this.print(firstArrayT);
-		//this.print(secondArrayT);
-		return merge(firstArrayT, secondArrayT);
+		//Thread mt = new Thread (new Mergesort<T>(arrayT, 0, arrayT.length-1));
+		//mt.start();
+		mergesort(arrayT, mid + 1, stop);
+		mergesort(arrayT, start, mid);
+		//mt.join();
+		merge(start, stop);
 	}
 
 	public void run() {
-		this.sort();
+		try {
+			this.sort();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.print(arrayT);
 	}
 
@@ -51,8 +52,20 @@ public class Mergesort<T extends Comparable> implements Runnable {
 		System.out.println("");
 	}
 
+	public void update(T[] newArrayT, int start, int stop) {
+		for (int indexArray = 0; indexArray < newArrayT.length; indexArray++) {
+			this.arrayT[start + indexArray] = newArrayT[indexArray];
+		}
+	}
+
 	@SuppressWarnings("unchecked")
-	public T[] merge(T[] arrayT1, T[] arrayT2) {
+	public void merge(int start, int stop) {
+		
+		int middle = Math.floorDiv(start + stop, 2);
+		T[] arrayT1 = Arrays.copyOfRange(arrayT, start, middle+1);
+		T[] arrayT2 = Arrays.copyOfRange(arrayT, middle + 1, stop+1);
+		print(arrayT1);
+		print(arrayT2);
 		T[] newArray = (T[]) new Comparable[arrayT1.length + arrayT2.length];
 		int indexArray1 = 0, indexArray2 = 0;
 		T first, second;
@@ -60,7 +73,7 @@ public class Mergesort<T extends Comparable> implements Runnable {
 			if (indexArray1 < arrayT1.length && indexArray2 < arrayT2.length) {
 				first = arrayT1[indexArray1];
 				second = arrayT2[indexArray2];
-				if (first.compareTo(second) > 0) { //if first is greater
+				if (first.compareTo(second) > 0) { // if first is greater
 					newArray[indexArray] = second;
 					indexArray2++;
 				} else {
@@ -75,10 +88,9 @@ public class Mergesort<T extends Comparable> implements Runnable {
 				second = arrayT2[indexArray2];
 				newArray[indexArray] = second;
 				indexArray2++;
-
 			}
 
 		}
-		return newArray;
+		update(newArray, start, stop);
 	}
 }
